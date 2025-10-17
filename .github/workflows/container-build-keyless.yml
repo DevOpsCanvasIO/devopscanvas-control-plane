@@ -1,0 +1,36 @@
+name: build-and-sign-keyless
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login GHCR
+        run: echo "${{ github.token }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      - name: Build image
+        run: |
+          docker build -t ${{ inputs.image }}:${{ github.sha }} .
+          docker push ${{ inputs.image }}:${{ github.sha }}
+      - name: Generate SBOM (syft)
+        uses: anchore/sbom-action@v0
+        with: { image: '${{ inputs.image }}:${{ github.sha }}', format: 'spdx-json' }
+      - name: Cosign sign (keyless)
+        uses: sigstore/cosign-installer@v3
+      - name: Sign container
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign sign --yes ${{ inputs.image }}@$(crane digest ${{ inputs.image }}:${{ github.sha }})
+      - name: Attach SBOM as attestation
+        env: { COSIGN_EXPERIMENTAL: 1 }
+        run: |
+          cosign attest --yes --predicate sbom.spdx.json --type spdx ${{ inputs.image }}:${{ github.sha }}

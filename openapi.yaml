@@ -1,0 +1,10 @@
+openapi: 3.0.0
+info: {title: DevOpsCanvas API, version: 0.2.1}
+paths:
+  /healthz:
+    get: { responses: { '200': { description: ok } } }
+  /api/scorecards/{service}:
+    get:
+      parameters: [ { name: service, in: path, required: true, schema: { type: string } } ]
+      responses:
+        '200': { description: scorecard, content: { application/json: {} } }
