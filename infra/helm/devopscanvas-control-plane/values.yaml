@@ -1,6 +1,6 @@
 image:
-  repository: ghcr.io/ORG/devopscanvas-control-plane
-  tag: latest
+  repository: nginx
+  tag: alpine
   pullPolicy: Always
 
 service:
