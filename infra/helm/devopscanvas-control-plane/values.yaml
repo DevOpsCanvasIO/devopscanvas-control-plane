@@ -1,12 +1,12 @@
 image:
-  repository: ghcr.io/DevOpsCanvasIO/devopscanvas-control-plane
-  tag: latest
+  repository: nginx
+  tag: alpine
   pullPolicy: Always
 
 service:
   type: LoadBalancer
-  port: 3000
-  targetPort: 3000
+  port: 80
+  targetPort: 80
 
 ingress:
   enabled: true
