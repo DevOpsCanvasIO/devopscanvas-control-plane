@@ -1,4 +1,3 @@
 apiVersion: v2
 name: devopscanvas-control-plane
-version: 0.1.1
-description: DevOpsCanvas Control Plane API
+version: 0.2.2
